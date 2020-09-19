@@ -1,6 +1,6 @@
 # SpeedySpeech [[Paper link]](https://arxiv.org/pdf/2008.03802.pdf)
 
-##수정중입니다.
+## 수정중입니다.
 
 While recent neural sequence-to-sequence models have greatly improved the quality of speech synthesis, 
 there has not been a system capable of 
