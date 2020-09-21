@@ -533,3 +533,6 @@ if __name__ == '__main__':
         checkpoint_every=10,
         logdir=logdir
     )
+
+
+    print('test')
