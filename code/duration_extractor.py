@@ -394,7 +394,6 @@ class DurationExtractor(nn.Module):
             self.logger.add_scalar('train/learning_rate', self.optimizer.param_groups[0]['lr'], self.epoch)
             if not e % checkpoint_every:
                 self.save()
-                print('finish save')
 
             print(f'Epoch {e} | Train - l1: {train_losses[0]}, guided_att: {train_losses[1]}| '
                   f'Valid - l1: {valid_losses[0]}, guided_att: {valid_losses[1]}|')
