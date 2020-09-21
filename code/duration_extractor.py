@@ -228,6 +228,7 @@ class DurationExtractor(nn.Module):
                 #'git_commit': self.git_commit
             },
             self.checkpoint)
+        print('finished save checkpoint at : ', os.path.join(self.logger.log_dir, f'{time.strftime("%Y-%m-%d")}_checkpoint_step{self.step}.pth'))
 
     def load(self, checkpoint):
         checkpoint = torch.load(checkpoint)
@@ -393,6 +394,7 @@ class DurationExtractor(nn.Module):
             self.logger.add_scalar('train/learning_rate', self.optimizer.param_groups[0]['lr'], self.epoch)
             if not e % checkpoint_every:
                 self.save()
+                print('finish save')
 
             print(f'Epoch {e} | Train - l1: {train_losses[0]}, guided_att: {train_losses[1]}| '
                   f'Valid - l1: {valid_losses[0]}, guided_att: {valid_losses[1]}|')
@@ -511,7 +513,7 @@ if __name__ == '__main__':
     parser.add_argument("--adam_lr", default=0.002, type=int, help="Initial learning rate for adam")
     parser.add_argument("--warmup_epochs", default=30, type=int, help="Warmup epochs for NoamScheduler")
     parser.add_argument("--from_checkpoint", default=False, type=str, help="Checkpoint file path")
-    parser.add_argument("--name", default="", type=str, help="Append to logdir name")
+    parser.add_argument("--name", default="duration_extractor", type=str, help="Append to logdir name")
     args = parser.parse_args()
 
     m = DurationExtractor(
@@ -520,7 +522,7 @@ if __name__ == '__main__':
         device='cuda' if torch.cuda.is_available() else 'cpu'
     )
 
-    logdir = os.path.join('logs', time.strftime("%Y-%m-%dT%H-%M-%S") + '-' + args.name)
+    logdir = os.path.join('../logs', time.strftime("%Y-%m-%dT%H-%M-%S") + '-' + args.name)
     if args.from_checkpoint:
         m.load(args.from_checkpoint)
         # use the folder with checkpoint as a logdir
