@@ -307,6 +307,7 @@ class SpeedySpeech(nn.Module):
                 #'git_commit': self.git_commit
             },
             self.checkpoint)
+        print('finish save checkpoint at ', os.path.join(self.logger.log_dir, f'{time.strftime("%Y-%m-%d")}_checkpoint_step{self.step}.pth'))
 
     def load(self, checkpoint, map_location=False):
         if map_location:
@@ -459,12 +460,12 @@ if __name__ == '__main__':
     import torch
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--batch_size", default=64, type=int, help="Batch size")
+    parser.add_argument("--batch_size", default=256, type=int, help="Batch size")
     parser.add_argument("--epochs", default=100, type=int, help="Training epochs")
     parser.add_argument("--grad_clip", default=1, type=int, help="Gradient clipping value")
     parser.add_argument("--adam_lr", default=0.002, type=int, help="Initial learning rate for adam")
     parser.add_argument("--standardize", default=True, type=bool, help="Standardize spectrograms")
-    parser.add_argument("--name", default="", type=str, help="Append to logdir name")
+    parser.add_argument("--name", default="checkpoint", type=str, help="Append to logdir name")
     parser.add_argument("--durations_filename", default="durations.txt", type=str, help="Name for extracted dutations file")
     args = parser.parse_args()
 
@@ -480,5 +481,5 @@ if __name__ == '__main__':
         grad_clip=args.grad_clip,
         batch_size=args.batch_size,
         checkpoint_every=10,
-        logdir=os.path.join('logs2', time.strftime("%Y-%m-%dT%H-%M-%S") + '-' + args.name)
+        logdir=os.path.join('../logs2', time.strftime("%Y-%m-%dT%H-%M-%S") + '-' + args.name)
     )

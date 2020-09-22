@@ -151,10 +151,12 @@ if __name__ == '__main__':
     from duration_extractor import DurationExtractor, Collate
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("checkpoint", type=str, help="Path to checkpoint of convolutional_cacotron model")
-    parser.add_argument("data_folder", type=str, help="Where the data live and where to save durations.")
+    parser.add_argument("--checkpoint", type=str, default='../logs/2020-09-21T07-04-49-duration_extractor/2020-09-22_checkpoint_step15000.pth',
+                        help="Path to checkpoint of convolutional_cacotron model")
+    parser.add_argument("--data_folder", type=str, default='../code/datasets/data/LJSpeech-1.1',
+                        help="Where the data live and where to save durations.")
     parser.add_argument("--durations_filename", default='durations.txt', type=str, help="Name of the final durations file.")
-    parser.add_argument("--batch_size", default=64, type=int, help="Batch size")
+    parser.add_argument("--batch_size", default=256, type=int, help="Batch size")
     args = parser.parse_args()
 
     # Load pretrained checkpoint and extract alignments to data_folder

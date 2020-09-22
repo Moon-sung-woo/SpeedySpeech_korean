@@ -238,9 +238,9 @@ class DurationExtractor(nn.Module):
         self.optimizer.load_state_dict(checkpoint['optimizer'])
         self.scheduler.load_state_dict(checkpoint['scheduler'])
 
-        commit = checkpoint['git_commit']
-        if commit != self.git_commit:
-            print(f'Warning: the loaded checkpoint was trained on commit {commit}, but you are on {self.git_commit}')
+        #commit = checkpoint['git_commit']
+        #if commit != self.git_commit:
+        #    print(f'Warning: the loaded checkpoint was trained on commit {commit}, but you are on {self.git_commit}')
         self.checkpoint = None  # prevent overriding old checkpoint
         return self
 
