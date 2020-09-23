@@ -42,7 +42,7 @@ from utils.optim import NoamScheduler
 from utils.transform import MinMaxNorm
 from utils.text import TextProcessor
 
-from datasets.AudioDataset import AudioDataset
+from datasets.AudioDataset import AudioDataset, K_AudioDataset
 from torch.utils.data import DataLoader
 
 from stft import MySTFT, pad_batch
@@ -402,7 +402,8 @@ class DurationExtractor(nn.Module):
         self.train()
 
         t_l1, t_att = 0, 0
-        for i, batch in enumerate(Bar(dataloader)):
+        #for i, batch in enumerate(Bar(dataloader)):
+        for i, batch in enumerate(dataloader):
             self.optimizer.zero_grad()
             spectrs, slen, phonemes, plen, text = batch
 
@@ -471,15 +472,26 @@ class DurationExtractor(nn.Module):
     def train_dataloader(self, batch_size):
         return DataLoader(AudioDataset(HPText.dataset, start_idx=0, end_idx=HPText.num_train, durations=False), batch_size=batch_size,
                           collate_fn=self.collate,
-                          shuffle=True)
-
+                          shuffle=False) #여기 원래 true인데 시험해보려고 바꾼 부분
+                          
     def val_dataloader(self, batch_size):
         dataset = AudioDataset(HPText.dataset, start_idx=HPText.num_train, end_idx=HPText.num_valid, durations=False)
         return DataLoader(dataset, batch_size=batch_size,
                           collate_fn=self.collate,
                           shuffle=False, sampler=SequentialSampler(dataset))
+    '''
+    def train_dataloader(self, batch_size):
+        return DataLoader(K_AudioDataset(HPText.k_dataset, start_idx=0, end_idx=HPText.k_num_train, durations=False), batch_size=batch_size,
+                          collate_fn=self.collate,
+                          shuffle=False) #여기 원래 true인데 시험해보려고 바꾼 부분
 
+    def val_dataloader(self, batch_size):
+        dataset = K_AudioDataset(HPText.k_dataset, start_idx=HPText.k_num_train, end_idx=HPText.k_num_valid, durations=False)
+        return DataLoader(dataset, batch_size=batch_size,
+                          collate_fn=self.collate,
+                          shuffle=False, sampler=SequentialSampler(dataset))
 
+    '''
 class Collate:
     def __init__(self, device):
         self.device = device
@@ -491,7 +503,11 @@ class Collate:
         text, wav, _ = list(zip(*list_of_tuples))
 
         phonemes, plen = self.text_proc(text)
+        print('phonemes : ', phonemes)
+        print('plen : ', plen)
         phonemes = phonemes.to(self.device)
+        print('text: ', text)
+
 
         spectrs, slen = self.stft.wav2spec(wav)
         spectrs = self.norm(spectrs)
@@ -506,7 +522,7 @@ if __name__ == '__main__':
     import torch
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--batch_size", default=256, type=int, help="Batch size")
+    parser.add_argument("--batch_size", default=2, type=int, help="Batch size")
     parser.add_argument("--epochs", default=300, type=int, help="Training epochs")
     parser.add_argument("--grad_clip", default=1, type=int, help="Gradient clipping value")
     parser.add_argument("--adam_lr", default=0.002, type=int, help="Initial learning rate for adam")
