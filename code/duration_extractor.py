@@ -402,8 +402,7 @@ class DurationExtractor(nn.Module):
         self.train()
 
         t_l1, t_att = 0, 0
-        #for i, batch in enumerate(Bar(dataloader)):
-        for i, batch in enumerate(dataloader):
+        for i, batch in enumerate(Bar(dataloader)):
             self.optimizer.zero_grad()
             spectrs, slen, phonemes, plen, text = batch
 
@@ -469,6 +468,7 @@ class DurationExtractor(nn.Module):
         self.logger.add_scalar('valid/guided_att', t_att / i, self.epoch)
         return t_l1/i, t_att/i
 
+    '''
     def train_dataloader(self, batch_size):
         return DataLoader(AudioDataset(HPText.dataset, start_idx=0, end_idx=HPText.num_train, durations=False), batch_size=batch_size,
                           collate_fn=self.collate,
@@ -491,7 +491,7 @@ class DurationExtractor(nn.Module):
                           collate_fn=self.collate,
                           shuffle=False, sampler=SequentialSampler(dataset))
 
-    '''
+
 class Collate:
     def __init__(self, device):
         self.device = device
@@ -503,11 +503,7 @@ class Collate:
         text, wav, _ = list(zip(*list_of_tuples))
 
         phonemes, plen = self.text_proc(text)
-        print('phonemes : ', phonemes)
-        print('plen : ', plen)
         phonemes = phonemes.to(self.device)
-        print('text: ', text)
-
 
         spectrs, slen = self.stft.wav2spec(wav)
         spectrs = self.norm(spectrs)
@@ -522,7 +518,7 @@ if __name__ == '__main__':
     import torch
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--batch_size", default=2, type=int, help="Batch size")
+    parser.add_argument("--batch_size", default=256, type=int, help="Batch size")
     parser.add_argument("--epochs", default=300, type=int, help="Training epochs")
     parser.add_argument("--grad_clip", default=1, type=int, help="Gradient clipping value")
     parser.add_argument("--adam_lr", default=0.002, type=int, help="Initial learning rate for adam")
@@ -537,7 +533,7 @@ if __name__ == '__main__':
         device='cuda' if torch.cuda.is_available() else 'cpu'
     )
 
-    logdir = os.path.join('../logs', time.strftime("%Y-%m-%dT%H-%M-%S") + '-' + args.name)
+    logdir = os.path.join('../k_logs', time.strftime("%Y-%m-%dT%H-%M-%S") + '-' + args.name)
     if args.from_checkpoint:
         m.load(args.from_checkpoint)
         # use the folder with checkpoint as a logdir
@@ -547,6 +543,6 @@ if __name__ == '__main__':
         epochs=args.epochs,
         grad_clip=args.grad_clip,
         batch_size=args.batch_size,
-        checkpoint_every=10,
+        checkpoint_every=1,
         logdir=logdir
     )

@@ -2,6 +2,7 @@ import re
 
 from g2p_en import G2p
 from functional import pad_batch
+from k_text.__init__ import text_to_sequence
 
 
 class TextProcessor:
@@ -43,7 +44,7 @@ class TextProcessor:
             self.text2idx = {g: i for i, g in enumerate(graphemes_list)}
             self.idx2text = {i: g for i, g in enumerate(graphemes_list)}
 
-    def __call__(self, text):
+    def __call__(self, texts):
         """
 
         :param text: list of sentences
@@ -52,19 +53,35 @@ class TextProcessor:
             orig_lengths, list of int
         """
 
-        text = [t.lower() for t in text]
+        #text = [t.lower() for t in text]
         if not self.phonemize:
-            text = [
+            texts = [
                 [self.text2idx.get(ch, 1) for ch in s]  # use <unk> if character not in grapheme_list
-                for s in text
+                for s in texts
             ]
-            return pad_batch(text)
+            return pad_batch(texts)
+
         else:
+            '''
+            print("text : ", texts)
+            #일단 여기 들어와서 바뀜!
             keep_re = "[^" + str(self.graphemes[2:]) +"]"
-            text = [re.sub(keep_re, "", t) for t in text]  # remove
-            phonemes = [self.g2p(t) for t in text]
+            texts = [re.sub(keep_re, "", t) for t in texts]  # remove
+            phonemes = [self.g2p(t) for t in texts]
             phonemes = [
                 [self.phon2idx.get(ch, 1) for ch in s]
                 for s in phonemes
             ]
+            #여기서 숫자로 바껴서 들어오면 된다.
+            print('text phonemes : ', phonemes)
+            #print('pad_batch : ', pad_batch(phonemes))
             return pad_batch(phonemes)
+            '''
+            #print('text : ', texts)
+            text_list = []
+            for text in texts:
+                phonemes = text_to_sequence(text, ['korean_cleaners'])
+                text_list.append(phonemes)
+            #print(text_list)
+            
+            return pad_batch(text_list)
