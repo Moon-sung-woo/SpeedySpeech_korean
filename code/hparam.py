@@ -25,8 +25,8 @@ class HPText:
     # needed to make independent on the directory from which python is invoked
     dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'datasets/data/LJSpeech-1.1')
     k_dataset = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'datasets/data/kss')
-    num_train, num_valid = 12800, 13099  # train will use (0, 13000), valid wil use (13000, 13099)
-    k_num_train, k_num_valid = 12553, 12852
+    #num_train, num_valid = 12800, 13099  # train will use (0, 13000), valid wil use (13000, 13099)
+    k_num_train, k_num_valid = 12553, 12851
 
     punctuation = list("'\",.:?!")
     graphemes = ["<pad>", "<unk>"] + list('abcdefghijklmnopqrstuvwxyz ') + punctuation

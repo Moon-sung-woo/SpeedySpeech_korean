@@ -456,13 +456,13 @@ class DurationExtractor(nn.Module):
                                            out_s[-1, :slen[-1]], att_s[-1][:slen[-1], :plen[-1]],
                                            text[-1])
             self.logger.add_figure(text[-1], fig, self.epoch)
-
-            if not self.epoch % 10:
+            '''
+            if not self.epoch % 1:
                 spec = self.collate.norm.inverse(out[-1:]) # TODO: this fails if we do not standardize!
                 sound, length = self.collate.stft.spec2wav(spec.transpose(1, 2), slen[-1:])
                 sound = sound[0, :length[0]]
                 self.logger.add_audio(text[-1], sound.detach().cpu().numpy(), self.epoch, sample_rate=22050) # TODO: parameterize
-
+            '''
         # report average cost per batch
         self.logger.add_scalar('valid/l1', t_l1 / i, self.epoch)
         self.logger.add_scalar('valid/guided_att', t_att / i, self.epoch)
@@ -483,7 +483,7 @@ class DurationExtractor(nn.Module):
     def train_dataloader(self, batch_size):
         return DataLoader(K_AudioDataset(HPText.k_dataset, start_idx=0, end_idx=HPText.k_num_train, durations=False), batch_size=batch_size,
                           collate_fn=self.collate,
-                          shuffle=False) #여기 원래 true인데 시험해보려고 바꾼 부분
+                          shuffle=True) #여기 원래 true인데 시험해보려고 바꾼 부분
 
     def val_dataloader(self, batch_size):
         dataset = K_AudioDataset(HPText.k_dataset, start_idx=HPText.k_num_train, end_idx=HPText.k_num_valid, durations=False)
@@ -543,6 +543,6 @@ if __name__ == '__main__':
         epochs=args.epochs,
         grad_clip=args.grad_clip,
         batch_size=args.batch_size,
-        checkpoint_every=1,
+        checkpoint_every=10,
         logdir=logdir
     )
