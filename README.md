@@ -66,6 +66,7 @@ The list of allowed symbols is specified in ```code/hparam.py```.
 To train speedyspeech, durations of phonemes are needed.
 
 **1. Download the [LJSpeech dataset](https://keithito.com/LJ-Speech-Dataset/)** and unzip into `datasets/data/LJSpeech-1.1`
+
 **1-1. If you want to train Korean, download the [KSS](https://www.kaggle.com/bryanpark/korean-single-speaker-speech-dataset/data)
 ```
 wget -O code/datasets/data/LJSpeech-1.1.tar.bz2 \
