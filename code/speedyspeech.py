@@ -35,7 +35,7 @@ from barbar import Bar  # progress bar
 from layers import Conv1d, ResidualBlock, FreqNorm
 from losses import l1_masked, masked_huber, masked_ssim, l1_dtw
 from functional import mask, positional_encoding, display_spectr_alignment
-from datasets.AudioDataset import AudioDataset
+from datasets.AudioDataset import AudioDataset, K_AudioDataset
 from extract_durations import fert2align
 from stft import MySTFT, pad_batch
 
@@ -407,25 +407,26 @@ class SpeedySpeech(nn.Module):
                                            text[-1])
             self.logger.add_figure(text[-1], fig, self.epoch)
 
+            '''
             # log audio every 10 epochs
             if not self.epoch % 10:
                 spec = self.collate.norm.inverse(out[-1:]) # TODO: this fails if we do not standardize!
                 sound, length = self.collate.stft.spec2wav(spec.transpose(1, 2), estimated_slen[-1:])
                 sound = sound[0, :length[0]]
                 self.logger.add_audio(text[-1], sound.detach().cpu().numpy(), self.epoch, sample_rate=22050) # TODO: parameterize
-
+            '''
         # report average cost per batch
         self.logger.add_scalar('valid/l1', t_l1 / i, self.epoch)
         self.logger.add_scalar('valid/durations_huber', t_huber / i, self.epoch)
         return t_l1, t_huber
 
     def train_dataloader(self, batch_size):
-        return DataLoader(AudioDataset(HPText.dataset, start_idx=0, end_idx=HPText.num_train, durations=self.durations_file), batch_size=batch_size,
+        return DataLoader(K_AudioDataset(HPText.k_dataset, start_idx=0, end_idx=HPText.k_num_train, durations=self.durations_file), batch_size=batch_size,
                           collate_fn=self.collate,
                           shuffle=True)
 
     def val_dataloader(self, batch_size):
-        dataset = AudioDataset(HPText.dataset, start_idx=HPText.num_train, end_idx=HPText.num_valid, durations=self.durations_file)
+        dataset = K_AudioDataset(HPText.k_dataset, start_idx=HPText.k_num_train, end_idx=HPText.k_num_valid, durations=self.durations_file)
         return DataLoader(dataset, batch_size=batch_size,
                           collate_fn=self.collate,
                           shuffle=False, sampler=SequentialSampler(dataset))
@@ -481,5 +482,5 @@ if __name__ == '__main__':
         grad_clip=args.grad_clip,
         batch_size=args.batch_size,
         checkpoint_every=10,
-        logdir=os.path.join('../logs2', time.strftime("%Y-%m-%dT%H-%M-%S") + '-' + args.name)
+        logdir=os.path.join('../k_logs2', time.strftime("%Y-%m-%dT%H-%M-%S") + '-' + args.name)
     )
