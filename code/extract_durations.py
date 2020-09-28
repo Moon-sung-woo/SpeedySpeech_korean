@@ -147,13 +147,13 @@ if __name__ == '__main__':
     from torch.utils.data import DataLoader
     from torch.utils.data.sampler import SequentialSampler
 
-    from datasets.AudioDataset import AudioDataset
+    from datasets.AudioDataset import AudioDataset, K_AudioDataset
     from duration_extractor import DurationExtractor, Collate
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--checkpoint", type=str, default='../logs/2020-09-21T07-04-49-duration_extractor/2020-09-22_checkpoint_step15000.pth',
+    parser.add_argument("--checkpoint", type=str, default='../k_logs/2020-09-24T15-18-33-duration_extractor/2020-09-24_checkpoint_step15000.pth',
                         help="Path to checkpoint of convolutional_cacotron model")
-    parser.add_argument("--data_folder", type=str, default='../code/datasets/data/LJSpeech-1.1',
+    parser.add_argument("--data_folder", type=str, default='../code/datasets/data/kss',
                         help="Where the data live and where to save durations.")
     parser.add_argument("--durations_filename", default='durations.txt', type=str, help="Name of the final durations file.")
     parser.add_argument("--batch_size", default=256, type=int, help="Batch size")
@@ -161,7 +161,7 @@ if __name__ == '__main__':
 
     # Load pretrained checkpoint and extract alignments to data_folder
     m = DurationExtractor().load(args.checkpoint)
-    dataset = AudioDataset(root=args.data_folder, durations=False)
+    dataset = K_AudioDataset(root=args.data_folder, durations=False)
     dataloader = DataLoader(dataset, batch_size=args.batch_size, collate_fn=Collate(m.device),
                       shuffle=False, sampler=SequentialSampler(dataset))
 
