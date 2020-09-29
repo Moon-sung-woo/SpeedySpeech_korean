@@ -40,9 +40,9 @@ def main(hp, args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config', type=str, required=True,
+    parser.add_argument('-c', '--config', type=str, default='config/default.yaml',
                         help="yaml file for config.")
-    parser.add_argument('-d', '--data_path', type=str, required=True,
+    parser.add_argument('-d', '--data_path', type=str, default='../datasets/',
                         help="root directory of wav files")
     args = parser.parse_args()
     hp = HParam(args.config)
