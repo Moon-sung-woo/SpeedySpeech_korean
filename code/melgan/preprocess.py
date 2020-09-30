@@ -4,6 +4,8 @@ import tqdm
 import torch
 import argparse
 import numpy as np
+import random
+import shutil
 
 from utils.stft import TacotronSTFT
 from utils.hparams import HParam
@@ -21,6 +23,15 @@ def main(hp, args):
 
     wav_files = glob.glob(os.path.join(args.data_path, '**', '*.wav'), recursive=True)
 
+    save_train_mel_path = 'melgan_train_mel_data'
+    save_val_mel_path = 'melgan_val_mel_data'
+    os.makedirs(save_train_mel_path, exist_ok=True)
+    os.makedirs(save_val_mel_path, exist_ok=True)
+
+    random.shuffle(wav_files)
+
+    count = 0
+    #for wavpath in wav_files:
     for wavpath in tqdm.tqdm(wav_files, desc='preprocess wav to mel'):
         sr, wav = read_wav_np(wavpath)
         assert sr == hp.audio.sampling_rate, \
@@ -34,15 +45,26 @@ def main(hp, args):
         wav = torch.from_numpy(wav).unsqueeze(0)
         mel = stft.mel_spectrogram(wav)
 
+        wav_name = wavpath.split('/')[5]
         melpath = wavpath.replace('.wav', '.mel')
-        torch.save(mel, melpath)
+        mel_name = melpath.split('/')[5]
+
+        if count <300:
+            final_mel_path = os.path.join(save_val_mel_path, mel_name)
+            final_wav_path = os.path.join(save_val_mel_path, wav_name)
+        else:
+            final_mel_path = os.path.join(save_train_mel_path, mel_name)
+            final_wav_path = os.path.join(save_train_mel_path, wav_name)
+        torch.save(mel, final_mel_path)
+        shutil.copy(wavpath, final_wav_path)
+        count += 1
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--config', type=str, default='config/default.yaml',
                         help="yaml file for config.")
-    parser.add_argument('-d', '--data_path', type=str, default='../datasets/',
+    parser.add_argument('-d', '--data_path', type=str, default='../datasets/data/kss/wavs',
                         help="root directory of wav files")
     args = parser.parse_args()
     hp = HParam(args.config)

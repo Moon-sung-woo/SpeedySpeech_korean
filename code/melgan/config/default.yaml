@@ -1,11 +1,11 @@
 data: # root path of train/validation data (in absolute path)
-  train: ''
-  validation: ''
+  train: 'melgan_train_mel_data'
+  validation: 'melgan_val_mel_data'
 ---
 train:
   rep_discriminator: 1
-  num_workers: 32
-  batch_size: 16
+  num_workers: 1
+  batch_size: 128 #16
   optimizer: 'adam'
   adam:
     lr: 0.0001
