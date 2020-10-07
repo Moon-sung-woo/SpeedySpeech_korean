@@ -33,8 +33,8 @@ from utils.text import TextProcessor
 from functional import mask
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--speedyspeech_checkpoint", default='checkpoints/speedyspeech.pth', type=str, help="Checkpoint file for speedyspeech model")
-parser.add_argument("--melgan_checkpoint", default='checkpoints/melgan.pth', type=str, help="Checkpoint file for MelGan.")
+parser.add_argument("--speedyspeech_checkpoint", default='k_logs2/2020-09-28T10-33-59-checkpoint/2020-09-28_checkpoint_step5000.pth', type=str, help="Checkpoint file for speedyspeech model")
+parser.add_argument("--melgan_checkpoint", default='code/melgan/chkpt/mel_k_log/mel_k_log_4150.pt', type=str, help="Checkpoint file for MelGan.")
 parser.add_argument("--device", type=str, default='cuda' if torch.cuda.is_available() else 'cpu',  help="What device to use.")
 parser.add_argument("--audio_folder", type=str, default="synthesized_audio", help="Where to save audios")
 args = parser.parse_args()
