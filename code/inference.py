@@ -54,9 +54,10 @@ melgan.eval(inference=False)
 print('Processing text')
 txt_processor = TextProcessor(HPText.graphemes, phonemize=HPText.use_phonemes)
 
-text = [t.strip() for t in sys.stdin.readlines()]
+text = [t.strip() for t in sys.stdin.readlines()] #['asddf', 'asdfasdf'] 형태임.
 
 print("=============================text========================")
+print(text)
 for i in text:
     print(i)
 print("=============================text========================")
