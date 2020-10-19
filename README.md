@@ -33,6 +33,9 @@ tar xjf code/datasets/data/LJSpeech-1.1.tar.bz2 -C code/datasets/data/
 ```
 **2. Train the duration extraction model**
 ```
+터미널에서 실행하는 경로와 pycharm에서 바로 실행하는 경로가 다를 수 있으니
+경로 확인하시고 실행해주세요
+저는 pycharm에서 바로 실행되게 경로를 수정했습니다.
 python code/duration_extractor.py -h  # display options
 python code/duration_extractor.py \
     --some_option value
